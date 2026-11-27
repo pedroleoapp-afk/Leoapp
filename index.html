@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Registro de Casos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: calmo, de trabalho — uma ferramenta de balcão que se usa o dia todo.
+   IDEA: um livro de protocolo da Uniasselvi: cada chamado é uma linha carimbada com status.
+   PICTURE: o formulário e a lista são a imagem; no relatório, o número grande do mês num campo amarelo.
+   COLOUR and TYPE: azul-marinho Uniasselvi #1D1934 + amarelo #FFC629 sobre branco; Montserrat nos títulos, Inter no corpo.
+   LAYOUT: abas no topo; formulário em uma coluna larga; lista em tabela que vira cartões no celular. */
+:root{color-scheme:light dark;--navy:#1D1934;--bg:light-dark(#ffffff,#110e20);--ink:light-dark(#1D1934,#f1effa);--mut:light-dark(#5d5a72,#aaa6c2);--line:light-dark(#e3e1ec,#2d2947);--soft:light-dark(#f5f4f9,#1D1934);--mint:#FFC629;--mintink:#1D1934;--field:#FFC629;--warn:light-dark(#b42318,#ff8a80);--gmud:light-dark(#e2701b,#ff9d52);--cham:light-dark(#8c7fd0,#b2a8ee);--fac:light-dark(#2f8f6b,#6fd3a9)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+h1,h2,.num{font-family:Montserrat,Inter,sans-serif;font-weight:700;line-height:1.05;text-wrap:balance;margin:0}
+h1{font-size:clamp(30px,5vw,44px)}h2{font-size:22px}
+.band{padding:clamp(24px,4vw,48px) max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+header.band{padding-bottom:0;background:var(--navy);color:#fff}header .sub{color:rgb(255 255 255/.75)}.brand{display:inline-flex;align-items:center;gap:8px;font:700 14px Montserrat,sans-serif;color:#FFC629;margin-bottom:14px}.brand i{width:10px;height:10px;border-radius:50%;background:#FFC629}
+.sub{color:var(--mut);margin:8px 0 0}
+.tabs{display:flex;gap:4px;margin-top:24px}
+.tabs button{appearance:none;border:0;background:none;color:rgb(255 255 255/.75);font:600 16px Inter,sans-serif;padding:12px 18px;min-height:44px;cursor:pointer;border-radius:8px 8px 0 0}
+.tabs button[aria-selected=true]{background:var(--bg);color:var(--ink);box-shadow:inset 0 3px 0 #FFC629}
+.panel[hidden]{display:none}
+form.card{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;padding:20px;border:1px solid var(--line);border-radius:14px;background:var(--soft)}
+.f{display:grid;gap:6px;align-content:start}.f.w2{grid-column:span 2}.f.w4{grid-column:1/-1}
+label,.lbl{font-size:13px;font-weight:600;color:var(--mut)}
+input:disabled{opacity:.5}
+input,select{font:16px Inter,sans-serif;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-height:44px;width:100%}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid #FFC629;outline-offset:2px}
+.seg{display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start}
+.seg label{display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:500 15px Inter,sans-serif;border-radius:999px;padding:8px 14px;min-height:44px;cursor:pointer}
+.seg input{width:auto;min-height:0;accent-color:#FFC629;margin:0}
+.seg label:has(input:checked){background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.actions{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{appearance:none;border:1px solid var(--ink);background:var(--ink);color:var(--bg);font:600 15px Inter,sans-serif;border-radius:10px;padding:10px 18px;min-height:44px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.sm{padding:6px 12px;min-height:36px;font-size:14px}
+.btn.del{border-color:var(--warn);color:var(--warn);background:transparent}
+.msg{font-size:14px;color:var(--mut)}.msg.err{color:var(--warn)}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin:28px 0 12px}
+.bar .f{flex:1 1 180px}.bar .grow{flex:3 1 260px}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{white-space:nowrap;text-align:left;font-size:13px;color:var(--mut);font-weight:600;border-bottom:2px solid var(--ink);padding:10px 8px}
+td{border-bottom:1px solid var(--line);padding:10px 8px;vertical-align:middle}
+td.n{font-family:Montserrat,sans-serif;font-weight:700;white-space:nowrap}
+td.d{white-space:nowrap}
+.pill{display:inline-block;border-radius:999px;padding:3px 10px;font-size:13px;font-weight:600;white-space:nowrap}
+.pill.fin{background:#FFC629;color:#1D1934}.pill.gmud{border:1px solid var(--gmud);color:var(--gmud)}.pill.fac{border:1px solid var(--fac);color:var(--fac)}.pill.cham{border:1px solid var(--cham);color:var(--cham)}.pill.sem{color:var(--mut);font-weight:400}.pill.and{background:transparent;border:1px solid var(--ink)}
+.pill.o{background:var(--soft);border:1px solid var(--line)}
+.ops{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}td .ops{flex-wrap:nowrap}
+.empty{padding:40px 16px;text-align:center;color:var(--mut);border:1px dashed var(--line);border-radius:14px}
+.scroll{overflow-x:auto}.count{font-size:14px;color:var(--mut);margin:8px 0 0}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-top:20px}
+.hero .big{background:var(--field);color:var(--mintink);padding:28px}
+.big .num{font-size:clamp(56px,10vw,96px)}
+.big p{margin:6px 0 0;font-weight:500}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin-top:22px}
+.stats .num{font-size:32px}.stats span{font-size:13px;color:inherit;opacity:.8}
+.side{padding:28px;display:grid;gap:14px;align-content:start}
+.row{display:grid;grid-template-columns:5.5em minmax(0,1fr) 3em;gap:10px;align-items:center;font-size:15px}
+.track{height:14px;background:var(--soft);border-radius:7px;overflow:hidden}
+.track i{display:block;height:100%;background:var(--ink);border-radius:7px;transition:width .4s}
+.row b{text-align:right;font-family:Montserrat,sans-serif}
+.stackbar{display:flex;height:14px;border-radius:7px;overflow:hidden;background:var(--soft)}
+.stackbar i{display:block;height:100%}
+.legend{display:flex;gap:8px 16px;flex-wrap:wrap;font-size:13px;color:var(--mut)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+dialog{border:1px solid var(--line);border-radius:14px;background:var(--bg);color:var(--ink);padding:24px;max-width:420px}
+dialog::backdrop{background:rgb(0 0 0/.45)}
+.note{font-size:13px;color:var(--mut);margin-top:14px}
+.tools{display:grid;gap:14px;margin-top:36px;padding:20px;border:1px solid var(--line);border-radius:14px}.tools .ops{justify-content:flex-start}.tools .sub{color:var(--mut)}
+.al{display:block;font-size:12px;font-weight:400;font-family:Inter,sans-serif;color:var(--mut)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:800px){form.card{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.f.w2{grid-column:1/-1}.hero{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){td .ops{flex-wrap:wrap}form.card{grid-template-columns:minmax(0,1fr)}.tabs button{flex:1}table{font-size:14px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:7em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:6.5em;margin-inline-start:-7em;color:var(--mut);font-size:13px;font-family:Inter,sans-serif;font-weight:500}.stack td:empty{display:none}.ops{justify-content:flex-start}}
+@media(prefers-reduced-motion:reduce){.track i{transition:none}}
+</style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script><script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script></head>
+<body>
+<header class="band"><div class="wrap">
+  <div class="brand"><i></i>UNIASSELVI · CSC</div>
+  <h1>Registro de casos</h1>
+  <p class="sub">Cadastre cada chamado, acompanhe o status e tire o relatório do mês.</p>
+  <nav class="tabs" role="tablist">
+    <button role="tab" id="tab-casos" aria-selected="true" data-p="casos">Casos</button>
+    <button role="tab" id="tab-rel" aria-selected="false" data-p="relatorio">Relatório mensal</button>
+  </nav>
+</div></header>
+
+<main>
+<section class="band panel" id="p-casos"><div class="wrap">
+  <form class="card" id="form" autocomplete="off">
+    <div class="f w2"><label for="titulo">Título *</label><input id="titulo" required placeholder="Resumo do caso"></div>
+    <div class="f"><label for="numero">Nº do chamado (Sydle)</label><input id="numero" inputmode="text" placeholder="Opcional"></div>
+    <div class="f"><label for="dataCham">Chamado aberto em</label><input id="dataCham" type="date" disabled></div>
+    <div class="f"><label for="data">Data de início *</label><input id="data" type="date" required></div>
+    <div class="f w2"><label for="aluno">Nome do aluno *</label><input id="aluno" required placeholder="Nome completo"></div>
+    <div class="f"><label for="matricula">Matrícula *</label><input id="matricula" required inputmode="numeric" placeholder="Ex.: 1234567"></div>
+    <div class="f w2"><span class="lbl">Origem *</span><div class="seg" id="origem">
+      <label><input type="radio" name="origem" value="Loja" checked>Loja</label>
+      <label><input type="radio" name="origem" value="E-mail">E-mail</label>
+      <label><input type="radio" name="origem" value="Fila">Fila</label></div></div>
+    <div class="f w2"><span class="lbl">Status *</span><div class="seg" id="status">
+      <label><input type="radio" name="status" value="Em andamento" checked>Em andamento</label>
+      <label><input type="radio" name="status" value="Aguardando GMUD">Aguardando GMUD</label>
+      <label><input type="radio" name="status" value="Aguardando chamado">Aguardando chamado</label>
+      <label><input type="radio" name="status" value="Finalizado">Finalizado</label>
+      <label><input type="radio" name="status" value="Finalizado – aguardando chamado">Finalizado – aguardando chamado</label></div></div>
+    <div class="actions">
+      <button class="btn" type="submit" id="salvar">Registrar caso</button>
+      <button class="btn ghost" type="button" id="cancelar" hidden>Cancelar edição</button>
+      <span class="msg" id="msg" role="status"></span>
+    </div>
+  </form>
+
+  <div class="bar">
+    <div class="f grow"><label for="busca">Buscar</label><input id="busca" type="search" placeholder="Chamado, título, aluno ou matrícula"></div>
+    <div class="f"><label for="fStatus">Status</label><select id="fStatus"><option value="">Todos</option><option>Em andamento</option><option>Aguardando GMUD</option><option>Aguardando chamado</option><option>Finalizado</option><option>Finalizado – aguardando chamado</option></select></div>
+    <div class="f"><label for="fOrigem">Origem</label><select id="fOrigem"><option value="">Todas</option><option>Loja</option><option>E-mail</option><option>Fila</option></select></div>
+  </div>
+  <div id="lista"></div>
+  <p class="count" id="count"></p>
+  <div class="tools">
+    <div><h2>Relatório e limpeza</h2><p class="sub" style="margin-top:4px">Baixe todos os casos antes de apagar. O relatório por mês fica na aba Relatório mensal.</p></div>
+    <div class="ops"><button class="btn" type="button" id="baixarTudo">Baixar relatório completo</button><button class="btn ghost" type="button" id="copiarTudo">Copiar tudo</button><button class="btn del" type="button" id="apagarTudo">Apagar tudo</button></div>
+    <span class="msg" id="msgTools" role="status"></span>
+  </div>
+</div></section>
+
+<section class="band panel" id="p-relatorio" hidden><div class="wrap">
+  <div class="bar" style="margin-top:0">
+    <div class="f" style="flex:0 1 220px"><label for="mes">Mês</label><input id="mes" type="month"></div>
+    <button class="btn" type="button" id="baixar">Baixar CSV</button>
+    <button class="btn ghost" type="button" id="copiar">Copiar tabela</button>
+    <span class="msg" id="msgRel" role="status"></span>
+  </div>
+  <div class="hero">
+    <div class="big">
+      <div class="lbl" style="color:inherit;opacity:.8" id="mesNome"></div>
+      <div class="num" id="tot">0</div>
+      <p>casos abertos no mês</p>
+      <div class="stats">
+        <div><div class="num" id="tFin">0</div><span>finalizados</span></div>
+        <div><div class="num" id="tAnd">0</div><span>em andamento</span></div>
+        <div><div class="num" id="tGmud">0</div><span>aguardando GMUD</span></div>
+        <div><div class="num" id="tCham">0</div><span>aguardando chamado</span></div>
+        <div><div class="num" id="tFac">0</div><span>finalizados, aguardando chamado</span></div>
+      </div>
+    </div>
+    <div class="side">
+      <h2>Por origem</h2>
+      <div id="origens"></div>
+      <h2 style="margin-top:10px">Status por origem</h2><p class="al">O percentual à direita é o de casos finalizados.</p>
+      <div id="mix"></div>
+      <div class="legend"><span><i style="background:var(--mint);border:1px solid var(--ink)"></i>Finalizado</span><span><i style="background:var(--ink)"></i>Em andamento</span><span><i style="background:var(--gmud)"></i>Aguardando GMUD</span><span><i style="background:var(--cham)"></i>Aguardando chamado</span><span><i style="background:var(--fac)"></i>Finalizado – aguardando chamado</span></div>
+    </div>
+  </div>
+  <h2 style="margin:32px 0 10px">Casos do mês</h2>
+  <div id="listaRel"></div>
+</div></section>
+</main>
+
+<dialog id="dlgAll"><h2>Apagar todos os casos?</h2><p id="dlgAllTxt"></p><p style="font-size:14px">Para confirmar, digite <b>APAGAR</b>:</p><input id="confAll" autocomplete="off">
+  <div class="actions" style="justify-content:flex-end;margin-top:16px"><button class="btn ghost" id="allNao">Cancelar</button><button class="btn del" id="allSim" disabled>Apagar tudo</button></div></dialog>
+<dialog id="dlg"><h2>Excluir caso?</h2><p id="dlgTxt"></p>
+  <div class="actions" style="justify-content:flex-end"><button class="btn ghost" id="dlgNao">Cancelar</button><button class="btn del" id="dlgSim">Excluir</button></div></dialog>
+
+<script>
+{
+const $=s=>document.querySelector(s);
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ORIG=['Loja','E-mail','Fila'];
+const MESES=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+const hoje=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const br=s=>s&&/^\d{4}-\d{2}-\d{2}$/.test(s)?s.slice(8,10)+'/'+s.slice(5,7)+'/'+s.slice(0,4):'';
+/* ====== CONFIGURAÇÃO DO BANCO (Supabase) ======
+   Cole aqui a Project URL e a chave pública (anon / publishable) do seu projeto.
+   Supabase > Project Settings > API (ou Data API). */
+const SUPABASE_URL='https://uacwxmfltirvfrxkjsfn.supabase.co';
+const SUPABASE_KEY='sb_publishable_bRhD_6XIY0WwybU2UYyJog_9KGapUo7';
+/* =============================================== */
+let casos=[],editId=null,sb=null,local=false,delId=null;
+
+$('#data').value=hoje();$('#mes').value=hoje().slice(0,7);
+
+for(const b of document.querySelectorAll('.tabs button'))b.addEventListener('click',()=>show(b.dataset.p));
+function show(p){for(const b of document.querySelectorAll('.tabs button'))b.setAttribute('aria-selected',b.dataset.p===p);
+  $('#p-casos').hidden=p!=='casos';$('#p-relatorio').hidden=p!=='relatorio';
+  if(location.hash!=='#'+p)history.replaceState(null,'','#'+p);if(p==='relatorio')renderRel()}
+if(location.hash==='#relatorio')show('relatorio');
+
+const radio=n=>document.querySelector('input[name='+n+']:checked').value;
+const setRadio=(n,v)=>{const r=document.querySelector('input[name='+n+'][value="'+v+'"]');if(r)r.checked=true};
+const msg=(t,err)=>{const m=$('#msg');m.textContent=t;m.className='msg'+(err?' err':'')};
+
+/* armazenamento */
+function loadLocal(){try{casos=JSON.parse(localStorage.getItem('casos')||'[]')}catch(e){casos=[]}render();renderRel()}
+function saveLocal(){try{localStorage.setItem('casos',JSON.stringify(casos))}catch(e){}}
+const MAP={numero:'numero',dataChamado:'data_chamado',titulo:'titulo',aluno:'aluno',matricula:'matricula',dataInicio:'data_inicio',origem:'origem',status:'status',dataFim:'data_fim',dataFimAluno:'data_fim_aluno',criadoEm:'criado_em',atualizadoEm:'atualizado_em'};
+const toRow=(o,id)=>{const r={id};for(const k in MAP)r[MAP[k]]=o[k]??'';return r};
+const fromRow=r=>{const o={id:r.id};for(const k in MAP)o[k]=r[MAP[k]]??'';return o};
+async function carregar(){
+  const {data,error}=await sb.from('casos').select('*');
+  if(error){msg('Erro ao carregar do banco: '+error.message,true);return}
+  casos=(data||[]).map(fromRow);render();renderRel();
+}
+async function salvar(id,obj){
+  if(local){const i=casos.findIndex(c=>c.id===id);if(i>=0)casos[i]={...obj,id};else casos.push({...obj,id});saveLocal();render();renderRel();return}
+  const {error}=await sb.from('casos').upsert(toRow(obj,id));if(error)throw error;await carregar()}
+async function remover(id){
+  if(local){casos=casos.filter(c=>c.id!==id);saveLocal();render();renderRel();return}
+  const {error}=await sb.from('casos').delete().eq('id',id);if(error)throw error;await carregar()}
+const novoId=()=>'c'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+
+$('#lista').innerHTML='<div class="empty">Carregando casos…</div>';
+function iniciar(){
+if(!/^https:\/\//.test(SUPABASE_URL)||!window.supabase){
+  local=true;loadLocal();msg(window.supabase?'Banco ainda não configurado: os casos ficam salvos só neste navegador.':'Não foi possível carregar a biblioteca do banco. Verifique a internet.',true);
+}else{
+  sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+  carregar();
+  sb.channel('casos-tempo-real').on('postgres_changes',{event:'*',schema:'public',table:'casos'},()=>carregar()).subscribe();
+  setInterval(()=>{if(!document.hidden)carregar()},30000);
+}
+}
+
+/* formulário */
+$('#form').addEventListener('submit',async ev=>{
+  ev.preventDefault();
+  const numero=$('#numero').value.trim(),titulo=$('#titulo').value.trim(),data=$('#data').value,aluno=$('#aluno').value.trim(),matricula=$('#matricula').value.trim();
+  if(!titulo||!data||!aluno||!matricula){msg('Preencha título, data, aluno e matrícula.',true);return}
+  const dup=numero&&casos.find(c=>String(c.numero||'').toLowerCase()===numero.toLowerCase()&&c.id!==editId);
+  if(dup){msg('Já existe um caso com o chamado '+numero+'.',true);return}
+  const status=radio('status'),antigo=casos.find(c=>c.id===editId);
+  const dataChamado=numero?($('#dataCham').value||hoje()):'';
+  const obj={numero,dataChamado,titulo,aluno,matricula,dataInicio:data,origem:radio('origem'),status,
+    dataFim:status==='Finalizado'?(antigo&&antigo.dataFim)||hoje():'',
+    dataFimAluno:status==='Finalizado – aguardando chamado'?(antigo&&antigo.dataFimAluno)||hoje():(status==='Finalizado'&&antigo&&antigo.dataFimAluno)||'',
+    criadoEm:antigo?antigo.criadoEm:new Date().toISOString(),atualizadoEm:new Date().toISOString()};
+  $('#salvar').disabled=true;
+  try{await salvar(editId||novoId(),obj);msg(editId?'Caso atualizado.':'Caso de '+aluno+' registrado.');limpar()}
+  catch(e){msg(e&&e.code==='quota_exceeded'?'Limite de armazenamento atingido.':'Não foi possível salvar. Tente de novo.',true)}
+  $('#salvar').disabled=false;
+});
+function limpar(){editId=null;$('#numero').value='';$('#titulo').value='';$('#dataCham').value='';$('#dataCham').disabled=true;$('#aluno').value='';$('#matricula').value='';$('#data').value=hoje();setRadio('origem','Loja');setRadio('status','Em andamento');
+  $('#salvar').textContent='Registrar caso';$('#cancelar').hidden=true}
+$('#cancelar').addEventListener('click',()=>{limpar();msg('')});
+$('#numero').addEventListener('input',()=>{const tem=!!$('#numero').value.trim();$('#dataCham').disabled=!tem;if(tem&&!$('#dataCham').value)$('#dataCham').value=hoje();if(!tem)$('#dataCham').value=''});
+
+/* lista */
+for(const id of ['#busca','#fStatus','#fOrigem'])$(id).addEventListener('input',render);
+const ordenar=a=>[...a].sort((x,y)=>(y.dataInicio||'').localeCompare(x.dataInicio||'')||(y.criadoEm||'').localeCompare(x.criadoEm||''));
+const PC={'Finalizado':'fin','Em andamento':'and','Aguardando GMUD':'gmud','Aguardando chamado':'cham','Finalizado – aguardando chamado':'fac'};
+const pill=s=>'<span class="pill '+(PC[s]||'and')+'">'+esc(s)+'</span>';
+function tabela(lista,ops){
+  return '<div class="scroll"><table class="stack"><thead><tr><th>Chamado</th><th>Título</th><th>Aluno</th><th>Matrícula</th><th>Início</th><th>Origem</th><th>Status</th>'+(ops?'<th></th>':'')+'</tr></thead><tbody>'+
+  lista.map(c=>'<tr><td class="n">'+(c.numero?esc(c.numero):'<span class="pill sem">sem chamado</span>')+(c.dataChamado?'<span class="al">aberto em '+esc(br(c.dataChamado))+'</span>':'')+'</td><td>'+esc(c.titulo)+'</td><td>'+esc(c.aluno)+'</td><td class="d">'+esc(c.matricula)+'</td><td class="d">'+esc(br(c.dataInicio))+'</td><td><span class="pill o">'+esc(c.origem)+'</span></td><td>'+pill(c.status)+(c.dataFim?'<span class="al">em '+esc(br(c.dataFim))+'</span>':c.dataFimAluno?'<span class="al">com o aluno em '+esc(br(c.dataFimAluno))+'</span>':'')+'</td>'+
+  (ops?'<td><div class="ops"><button class="btn sm ghost" data-a="tog" data-id="'+esc(c.id)+'">'+(c.status==='Finalizado'?'Reabrir':'Finalizar')+'</button><button class="btn sm ghost" data-a="ed" data-id="'+esc(c.id)+'">Editar</button><button class="btn sm del" data-a="del" data-id="'+esc(c.id)+'">Excluir</button></div></td>':'')+'</tr>').join('')+'</tbody></table></div>'}
+function render(){
+  const q=$('#busca').value.trim().toLowerCase(),fs=$('#fStatus').value,fo=$('#fOrigem').value;
+  const l=ordenar(casos.filter(c=>(!fs||c.status===fs)&&(!fo||c.origem===fo)&&(!q||String(c.numero).toLowerCase().includes(q)||String(c.titulo).toLowerCase().includes(q)||String(c.aluno||'').toLowerCase().includes(q)||String(c.matricula||'').toLowerCase().includes(q))));
+  $('#lista').innerHTML=casos.length?(l.length?tabela(l,true):'<div class="empty">Nenhum caso com esses filtros.</div>'):'<div class="empty">Nenhum caso registrado ainda. Use o formulário acima para cadastrar o primeiro.</div>';
+  const ab=casos.filter(c=>c.status!=='Finalizado').length;
+  $('#count').textContent=casos.length?l.length+' de '+casos.length+' casos · '+ab+' em aberto':'';
+}
+$('#lista').addEventListener('click',async ev=>{
+  const b=ev.target.closest('button[data-a]');if(!b)return;const c=casos.find(x=>x.id===b.dataset.id);if(!c)return;
+  if(b.dataset.a==='ed'){editId=c.id;$('#numero').value=c.numero;$('#titulo').value=c.titulo;$('#dataCham').value=c.dataChamado||'';$('#dataCham').disabled=!c.numero;$('#aluno').value=c.aluno||'';$('#matricula').value=c.matricula||'';$('#data').value=c.dataInicio;setRadio('origem',c.origem);setRadio('status',c.status);
+    $('#salvar').textContent='Salvar alterações';$('#cancelar').hidden=false;msg('Editando o caso de '+(c.aluno||c.titulo)+'.');$('#numero').focus();window.scrollTo({top:0,behavior:'smooth'})}
+  if(b.dataset.a==='tog'){const {id,...rest}=c;const fin=c.status!=='Finalizado';b.disabled=true;
+    try{await salvar(id,{...rest,status:fin?'Finalizado':'Em andamento',dataFim:fin?hoje():'',atualizadoEm:new Date().toISOString()})}catch(e){msg('Não foi possível atualizar.',true)}b.disabled=false}
+  if(b.dataset.a==='del'){delId=c.id;$('#dlgTxt').textContent=(c.numero?'Chamado '+c.numero+' — ':'')+c.titulo+(c.aluno?' ('+c.aluno+')':'')+'. Essa ação não pode ser desfeita.';$('#dlg').showModal()}
+});
+$('#dlgNao').addEventListener('click',()=>$('#dlg').close());
+$('#dlgSim').addEventListener('click',async()=>{$('#dlg').close();if(!delId)return;try{await remover(delId);msg('Caso excluído.')}catch(e){msg('Não foi possível excluir.',true)}delId=null});
+
+/* relatório */
+$('#mes').addEventListener('input',renderRel);
+const doMes=()=>{const m=$('#mes').value;return ordenar(casos.filter(c=>(c.dataInicio||'').slice(0,7)===m))};
+function renderRel(){
+  const m=$('#mes').value,l=doMes();
+  $('#mesNome').textContent=m?MESES[+m.slice(5,7)-1]+' de '+m.slice(0,4):'Escolha um mês';
+  const fin=l.filter(c=>c.status==='Finalizado').length;
+  const ct=st=>l.filter(c=>c.status===st).length;
+  $('#tot').textContent=l.length;$('#tFin').textContent=fin;$('#tAnd').textContent=ct('Em andamento');$('#tGmud').textContent=ct('Aguardando GMUD');$('#tCham').textContent=ct('Aguardando chamado');$('#tFac').textContent=ct('Finalizado – aguardando chamado');
+  const max=Math.max(1,...ORIG.map(o=>l.filter(c=>c.origem===o).length));
+  $('#origens').innerHTML=ORIG.map(o=>{const n=l.filter(c=>c.origem===o).length;return '<div class="row"><span>'+o+'</span><div class="track"><i style="width:'+(n/max*100)+'%"></i></div><b>'+n+'</b></div>'}).join('');
+  $('#mix').innerHTML=ORIG.map(o=>{const t=l.filter(c=>c.origem===o),f=t.filter(c=>c.status==='Finalizado').length,pf=t.length?f/t.length*100:0;
+    return '<div class="row"><span>'+o+'</span><div class="stackbar">'+(t.length?[['Finalizado','var(--mint)'],['Em andamento','var(--ink)'],['Aguardando GMUD','var(--gmud)'],['Aguardando chamado','var(--cham)'],['Finalizado – aguardando chamado','var(--fac)']].map(([st,cor])=>'<i style="width:'+(t.filter(c=>c.status===st).length/t.length*100)+'%;background:'+cor+'"></i>').join(''):'')+'</div><b>'+(t.length?Math.round(pf)+'%':'–')+'</b></div>'}).join('');
+  $('#listaRel').innerHTML=l.length?tabela(l,false):'<div class="empty">Nenhum caso iniciado neste mês.</div>';
+}
+function csv(l){
+  l=l||doMes();const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+  return '﻿'+['Chamado;Chamado aberto em;Título;Aluno;Matrícula;Data de início;Origem;Status;Finalizado com o aluno em;Finalizado em',...l.map(c=>[c.numero,br(c.dataChamado),c.titulo,c.aluno,c.matricula,br(c.dataInicio),c.origem,c.status,br(c.dataFimAluno),br(c.dataFim)].map(q).join(';'))].join('\r\n')}
+const rel=(t,err)=>{const m=$('#msgRel');m.textContent=t;m.className='msg'+(err?' err':'')};
+const dl={save:async({filename,data})=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'text/csv;charset=utf-8'}));a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}};
+$('#baixar').addEventListener('click',async()=>{
+  if(!dl){rel('Download indisponível aqui; use Copiar tabela.',true);return}
+  try{await dl.save({filename:'casos-'+$('#mes').value+'.csv',data:csv()});rel('Arquivo baixado.')}
+  catch(e){rel(e&&e.code==='declined'?'Download cancelado.':'Não foi possível baixar; use Copiar tabela.',e&&e.code!=='declined')}});
+$('#copiar').addEventListener('click',async()=>{
+  const t=tsv(doMes());
+  try{await navigator.clipboard.writeText(t);rel('Tabela copiada — cole no Excel.')}catch(e){rel('Não foi possível copiar.',true)}});
+function tsv(l){return ['Chamado\tChamado aberto em\tTítulo\tAluno\tMatrícula\tData de início\tOrigem\tStatus\tFinalizado com o aluno em\tFinalizado em',...l.map(c=>[c.numero,br(c.dataChamado),c.titulo,c.aluno,c.matricula,br(c.dataInicio),c.origem,c.status,br(c.dataFimAluno),br(c.dataFim)].map(v=>String(v??'').replace(/[\t\n]/g,' ')).join('\t'))].join('\n')}
+const tm=(t,err)=>{const m=$('#msgTools');m.textContent=t;m.className='msg'+(err?' err':'')};
+$('#baixarTudo').addEventListener('click',async()=>{
+  if(!casos.length){tm('Não há casos para baixar.',true);return}
+  if(!dl){tm('Download indisponível aqui; use Copiar tudo.',true);return}
+  try{await dl.save({filename:'casos-completo-'+hoje()+'.csv',data:csv(ordenar(casos))});tm('Relatório completo baixado ('+casos.length+' casos).')}
+  catch(e){tm(e&&e.code==='declined'?'Download cancelado.':'Não foi possível baixar; use Copiar tudo.',e&&e.code!=='declined')}});
+$('#copiarTudo').addEventListener('click',async()=>{
+  if(!casos.length){tm('Não há casos para copiar.',true);return}
+  try{await navigator.clipboard.writeText(tsv(ordenar(casos)));tm('Todos os casos copiados — cole no Excel.')}catch(e){tm('Não foi possível copiar.',true)}});
+$('#apagarTudo').addEventListener('click',()=>{
+  if(!casos.length){tm('Não há casos para apagar.',true);return}
+  $('#dlgAllTxt').textContent='Isso remove os '+casos.length+' casos do banco, para todos que usam esta página. Não dá para desfazer — baixe o relatório completo antes.';
+  $('#confAll').value='';$('#allSim').disabled=true;$('#dlgAll').showModal();$('#confAll').focus()});
+$('#confAll').addEventListener('input',()=>{$('#allSim').disabled=$('#confAll').value.trim().toUpperCase()!=='APAGAR'});
+$('#allNao').addEventListener('click',()=>$('#dlgAll').close());
+$('#allSim').addEventListener('click',async()=>{
+  $('#dlgAll').close();const ids=casos.map(c=>c.id);let ok=0,fail=0;
+  $('#apagarTudo').disabled=true;
+  if(local){casos=[];saveLocal();render();renderRel();ok=ids.length}
+  else{const {error}=await sb.from('casos').delete().neq('id','__nenhum__');if(error)fail=ids.length;else ok=ids.length;await carregar()}
+  $('#apagarTudo').disabled=false;limpar();
+  tm(fail?ok+' casos apagados; '+fail+' não puderam ser apagados. Tente de novo.':'Todos os '+ok+' casos foram apagados.',!!fail)});
+renderRel();
+iniciar();
+}
+</script>
+</body>
+</html>
